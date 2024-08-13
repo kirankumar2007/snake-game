@@ -64,3 +64,11 @@ body {
     font-size: 18px;
     font-weight: bold;
 }
+#powerUp {
+    position: absolute;
+    background-color: #FFD700;
+    border: 2px solid #DAA520;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+}
