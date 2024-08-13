@@ -50,7 +50,7 @@ function drawGame() {
 }
 
 function clearCanvas() {
-    ctx.fillStyle = '#444';
+    ctx.fillStyle = '#2c3e50';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
@@ -69,7 +69,13 @@ function moveSnake() {
 
 function drawSnake() {
     snake.forEach((segment, index) => {
-        ctx.fillStyle = index === 0 ? 'darkgreen' : `rgb(0, ${155 + index * 10}, 0)`;
+        const gradient = ctx.createLinearGradient(
+            segment.x * gridSize, segment.y * gridSize,
+            (segment.x + 1) * gridSize, (segment.y + 1) * gridSize
+        );
+        gradient.addColorStop(0, '#2ecc71');
+        gradient.addColorStop(1, '#27ae60');
+        ctx.fillStyle = gradient;
         ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize - 2, gridSize - 2);
     });
 }
@@ -143,8 +149,8 @@ function updateScore() {
 }
 
 function checkLevelUp() {
-    if (score > 0 && score % 5 === 0) {
-        level = Math.floor(score / 5) + 1;
+    if (score > 0 && score % 5 === 0 && score / 5 + 1 > level) {
+        level++;
         gameSpeed = Math.max(50, 100 - (level - 1) * 10);
         clearInterval(gameLoop);
         gameLoop = setInterval(drawGame, gameSpeed);
@@ -171,6 +177,16 @@ document.addEventListener('keydown', (e) => {
             break;
         case 'ArrowRight':
             if (dx === 0) { dx = 1; dy = 0; }
+            break;
+        case ' ':  // Spacebar for speed boost
+            gameSpeed = 50;  // Increase speed temporarily
+            clearInterval(gameLoop);
+            gameLoop = setInterval(drawGame, gameSpeed);
+            setTimeout(() => {
+                gameSpeed = Math.max(50, 100 - (level - 1) * 10);
+                clearInterval(gameLoop);
+                gameLoop = setInterval(drawGame, gameSpeed);
+            }, 2000);  // Speed boost lasts for 2 seconds
             break;
     }
 });
