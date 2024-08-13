@@ -49,7 +49,7 @@ function drawGame() {
 }
 
 function clearCanvas() {
-    ctx.fillStyle = '#d9d9d9';
+    ctx.fillStyle = '#202020';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
@@ -67,14 +67,13 @@ function moveSnake() {
 }
 
 function drawSnake() {
+    ctx.lineJoin = "round";
+    ctx.lineWidth = gridSize - 10;
     snake.forEach((segment, index) => {
-        ctx.fillStyle = `hsl(${index * 10}, 100%, 50%)`; // Gradient effect
-        ctx.strokeStyle = '#004d00';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(segment.x * gridSize + gridSize / 2, segment.y * gridSize + gridSize / 2, gridSize / 2 - 2, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.stroke();
+        ctx.fillStyle = `hsl(${(index * 10) % 360}, 100%, 50%)`; // Gradient effect
+        ctx.strokeStyle = 'black';
+        ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize, gridSize);
+        ctx.strokeRect(segment.x * gridSize, segment.y * gridSize, gridSize, gridSize);
     });
 }
 
