@@ -1,7 +1,12 @@
-<link rel="stylesheet" href="styles.css">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Game</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <canvas id="gameCanvas" width="400" height="400"></canvas>
     <div id="gameContainer">
         <div id="startScreen">
             <h1>Snake Game</h1>
@@ -13,6 +18,11 @@
             <span id="levelDisplay">Level: 1</span>
             <span id="highScoreDisplay">High Score: 0</span>
         </div>
+    </div>
+    <div id="gameOverScreen" style="display: none;">
+        <h1>Game Over!</h1>
+        <p>Your score: <span id="finalScore"></span></p>
+        <button id="restartButton">Restart Game</button>
     </div>
     <script src="script.js"></script>
 </body>

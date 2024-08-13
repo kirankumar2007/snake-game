@@ -2,9 +2,12 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const startScreen = document.getElementById('startScreen');
 const startButton = document.getElementById('startButton');
+const gameOverScreen = document.getElementById('gameOverScreen');
+const restartButton = document.getElementById('restartButton');
 const scoreDisplay = document.getElementById('scoreDisplay');
 const levelDisplay = document.getElementById('levelDisplay');
 const highScoreDisplay = document.getElementById('highScoreDisplay');
+const finalScore = document.getElementById('finalScore');
 
 const gridSize = 20;
 const tileCount = canvas.width / gridSize;
@@ -21,9 +24,11 @@ let gameLoop;
 let isPaused = false;
 
 startButton.addEventListener('click', startGame);
+restartButton.addEventListener('click', startGame);
 
 function startGame() {
     startScreen.style.display = 'none';
+    gameOverScreen.style.display = 'none';
     resetGame();
     gameLoop = setInterval(drawGame, gameSpeed);
 }
@@ -41,7 +46,7 @@ function drawGame() {
 }
 
 function clearCanvas() {
-    ctx.fillStyle = '#e0e0e0';
+    ctx.fillStyle = '#444';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
@@ -58,13 +63,8 @@ function moveSnake() {
 }
 
 function drawSnake() {
-    ctx.fillStyle = 'green';
     snake.forEach((segment, index) => {
-        if (index === 0) {
-            ctx.fillStyle = 'darkgreen';
-        } else {
-            ctx.fillStyle = `rgb(0, ${155 + index * 10}, 0)`;
-        }
+        ctx.fillStyle = index === 0 ? 'darkgreen' : `rgb(0, ${155 + index * 10}, 0)`;
         ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize - 2, gridSize - 2);
     });
 }
@@ -77,8 +77,10 @@ function drawFood() {
 }
 
 function generateFood() {
-    food.x = Math.floor(Math.random() * tileCount);
-    food.y = Math.floor(Math.random() * tileCount);
+    do {
+        food.x = Math.floor(Math.random() * tileCount);
+        food.y = Math.floor(Math.random() * tileCount);
+    } while (snake.some(segment => segment.x === food.x && segment.y === food.y));
 }
 
 function checkCollision() {
@@ -101,8 +103,8 @@ function gameOver() {
         highScore = score;
         highScoreDisplay.textContent = `High Score: ${highScore}`;
     }
-    alert(`Game Over! Your score: ${score}`);
-    startScreen.style.display = 'flex';
+    finalScore.textContent = score;
+    gameOverScreen.style.display = 'flex';
 }
 
 function resetGame() {
@@ -140,15 +142,23 @@ document.addEventListener('keydown', (e) => {
 
     switch (e.key) {
         case 'ArrowUp':
+        case 'w':
+        case 'W':
             if (dy === 0) { dx = 0; dy = -1; }
             break;
         case 'ArrowDown':
+        case 's':
+        case 'S':
             if (dy === 0) { dx = 0; dy = 1; }
             break;
         case 'ArrowLeft':
+        case 'a':
+        case 'A':
             if (dx === 0) { dx = -1; dy = 0; }
             break;
         case 'ArrowRight':
+        case 'd':
+        case 'D':
             if (dx === 0) { dx = 1; dy = 0; }
             break;
     }
