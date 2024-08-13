@@ -18,16 +18,14 @@
             <span id="levelDisplay">Level: 1</span>
             <span id="highScoreDisplay">High Score: 0</span>
         </div>
+        <div id="gameOverScreen">
+            <h2>Game Over</h2>
+            <p>Final Score: <span id="finalScore">0</span></p>
+            <button id="restartButton">Restart</button>
+        </div>
+        <audio id="eatSound" src="eat-sound.mp3"></audio>
+        <audio id="gameOverSound" src="game-over-sound.mp3"></audio>
     </div>
-    <div id="gameOverScreen" style="display: none;">
-        <h1>Game Over!</h1>
-        <p>Your score: <span id="finalScore"></span></p>
-        <button id="restartButton">Restart Game</button>
-        <h2>Top Scores</h2>
-        <ul id="scoreboard"></ul>
-    </div>
-    <audio id="eatSound" src="eat.mp3"></audio>
-    <audio id="gameOverSound" src="game-over.mp3"></audio>
     <script src="script.js"></script>
 </body>
 </html>

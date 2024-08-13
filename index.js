@@ -1,14 +1,13 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const startScreen = document.getElementById('startScreen');
-const startButton = document.getElementById('startButton');
 const gameOverScreen = document.getElementById('gameOverScreen');
+const startButton = document.getElementById('startButton');
 const restartButton = document.getElementById('restartButton');
 const scoreDisplay = document.getElementById('scoreDisplay');
 const levelDisplay = document.getElementById('levelDisplay');
 const highScoreDisplay = document.getElementById('highScoreDisplay');
 const finalScore = document.getElementById('finalScore');
-const scoreboard = document.getElementById('scoreboard');
 const eatSound = document.getElementById('eatSound');
 const gameOverSound = document.getElementById('gameOverSound');
 
@@ -25,7 +24,7 @@ let highScore = 0;
 let gameSpeed = 100;
 let gameLoop;
 let isPaused = false;
-let scores = [];
+let speedBoostActive = false;
 
 startButton.addEventListener('click', startGame);
 restartButton.addEventListener('click', startGame);
@@ -39,7 +38,7 @@ function startGame() {
 
 function drawGame() {
     if (isPaused) return;
-    
+
     clearCanvas();
     moveSnake();
     drawSnake();
@@ -50,7 +49,7 @@ function drawGame() {
 }
 
 function clearCanvas() {
-    ctx.fillStyle = '#2c3e50';
+    ctx.fillStyle = '#d9d9d9';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
@@ -69,22 +68,24 @@ function moveSnake() {
 
 function drawSnake() {
     snake.forEach((segment, index) => {
-        const gradient = ctx.createLinearGradient(
-            segment.x * gridSize, segment.y * gridSize,
-            (segment.x + 1) * gridSize, (segment.y + 1) * gridSize
-        );
-        gradient.addColorStop(0, '#2ecc71');
-        gradient.addColorStop(1, '#27ae60');
-        ctx.fillStyle = gradient;
-        ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize - 2, gridSize - 2);
+        ctx.fillStyle = `hsl(${index * 10}, 100%, 50%)`; // Gradient effect
+        ctx.strokeStyle = '#004d00';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(segment.x * gridSize + gridSize / 2, segment.y * gridSize + gridSize / 2, gridSize / 2 - 2, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.stroke();
     });
 }
 
 function drawFood() {
-    ctx.fillStyle = 'red';
+    ctx.fillStyle = '#ff4500';
+    ctx.strokeStyle = '#b22222';
+    ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.arc((food.x * gridSize) + gridSize / 2, (food.y * gridSize) + gridSize / 2, gridSize / 2 - 2, 0, 2 * Math.PI);
+    ctx.arc(food.x * gridSize + gridSize / 2, food.y * gridSize + gridSize / 2, gridSize / 2 - 4, 0, 2 * Math.PI);
     ctx.fill();
+    ctx.stroke();
 }
 
 function generateFood() {
@@ -111,35 +112,23 @@ function checkCollision() {
 function gameOver() {
     clearInterval(gameLoop);
     gameOverSound.play();
-    scores.push(score);
-    scores.sort((a, b) => b - a);
-    if (scores.length > 5) scores.pop();
-    updateScoreboard();
+    finalScore.textContent = score;
     if (score > highScore) {
         highScore = score;
         highScoreDisplay.textContent = `High Score: ${highScore}`;
     }
-    finalScore.textContent = score;
     gameOverScreen.style.display = 'flex';
-}
-
-function updateScoreboard() {
-    scoreboard.innerHTML = '';
-    scores.forEach((score, index) => {
-        const scoreItem = document.createElement('li');
-        scoreItem.textContent = `${index + 1}. ${score}`;
-        scoreboard.appendChild(scoreItem);
-    });
 }
 
 function resetGame() {
     snake = [{x: 10, y: 10}];
     generateFood();
-    dx = 0;
+    dx = 1;
     dy = 0;
     score = 0;
     level = 1;
     gameSpeed = 100;
+    speedBoostActive = false;
     updateScore();
 }
 
@@ -178,17 +167,22 @@ document.addEventListener('keydown', (e) => {
         case 'ArrowRight':
             if (dx === 0) { dx = 1; dy = 0; }
             break;
-        case ' ':  // Spacebar for speed boost
-            gameSpeed = 50;  // Increase speed temporarily
-            clearInterval(gameLoop);
-            gameLoop = setInterval(drawGame, gameSpeed);
-            setTimeout(() => {
-                gameSpeed = Math.max(50, 100 - (level - 1) * 10);
-                clearInterval(gameLoop);
-                gameLoop = setInterval(drawGame, gameSpeed);
-            }, 2000);  // Speed boost lasts for 2 seconds
+        case ' ':
+            toggleSpeedBoost();
             break;
     }
 });
+
+function toggleSpeedBoost() {
+    if (!speedBoostActive) {
+        gameSpeed /= 2;
+        speedBoostActive = true;
+    } else {
+        gameSpeed *= 2;
+        speedBoostActive = false;
+    }
+    clearInterval(gameLoop);
+    gameLoop = setInterval(drawGame, gameSpeed);
+}
 
 highScoreDisplay.textContent = `High Score: ${highScore}`;
