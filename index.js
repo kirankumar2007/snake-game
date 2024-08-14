@@ -8,6 +8,9 @@ const scoreDisplay = document.getElementById('scoreDisplay');
 const levelDisplay = document.getElementById('levelDisplay');
 const highScoreDisplay = document.getElementById('highScoreDisplay');
 const finalScore = document.getElementById('finalScore');
+const scoreboard = document.getElementById('scoreboard');
+const eatSound = document.getElementById('eatSound');
+const gameOverSound = document.getElementById('gameOverSound');
 
 const gridSize = 20;
 const tileCount = canvas.width / gridSize;
@@ -22,6 +25,7 @@ let highScore = 0;
 let gameSpeed = 100;
 let gameLoop;
 let isPaused = false;
+let scores = [];
 
 startButton.addEventListener('click', startGame);
 restartButton.addEventListener('click', startGame);
@@ -56,6 +60,7 @@ function moveSnake() {
 
     if (head.x === food.x && head.y === food.y) {
         score++;
+        eatSound.play();
         generateFood();
     } else {
         snake.pop();
@@ -99,12 +104,26 @@ function checkCollision() {
 
 function gameOver() {
     clearInterval(gameLoop);
+    gameOverSound.play();
+    scores.push(score);
+    scores.sort((a, b) => b - a);
+    if (scores.length > 5) scores.pop();
+    updateScoreboard();
     if (score > highScore) {
         highScore = score;
         highScoreDisplay.textContent = `High Score: ${highScore}`;
     }
     finalScore.textContent = score;
     gameOverScreen.style.display = 'flex';
+}
+
+function updateScoreboard() {
+    scoreboard.innerHTML = '';
+    scores.forEach((score, index) => {
+        const scoreItem = document.createElement('li');
+        scoreItem.textContent = `${index + 1}. ${score}`;
+        scoreboard.appendChild(scoreItem);
+    });
 }
 
 function resetGame() {
@@ -142,23 +161,15 @@ document.addEventListener('keydown', (e) => {
 
     switch (e.key) {
         case 'ArrowUp':
-        case 'w':
-        case 'W':
             if (dy === 0) { dx = 0; dy = -1; }
             break;
         case 'ArrowDown':
-        case 's':
-        case 'S':
             if (dy === 0) { dx = 0; dy = 1; }
             break;
         case 'ArrowLeft':
-        case 'a':
-        case 'A':
             if (dx === 0) { dx = -1; dy = 0; }
             break;
         case 'ArrowRight':
-        case 'd':
-        case 'D':
             if (dx === 0) { dx = 1; dy = 0; }
             break;
     }

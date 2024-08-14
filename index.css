@@ -7,16 +7,33 @@ body {
     background-color: #282c34;
     font-family: Arial, sans-serif;
     color: #fff;
+    overflow: hidden;
+    background-image: radial-gradient(circle, #333 1%, transparent 1%);
+    background-size: 10px 10px;
+    animation: bgAnimation 5s linear infinite;
+}
+
+@keyframes bgAnimation {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: 100px 100px;
+    }
 }
 
 #gameContainer {
     position: relative;
     text-align: center;
+    width: 100%;
+    max-width: 450px;
 }
 
 #gameCanvas {
     border: 2px solid #333;
     background-color: #444;
+    width: 100%;
+    max-width: 100%;
 }
 
 #startScreen, #gameOverScreen {
@@ -30,6 +47,7 @@ body {
     justify-content: center;
     align-items: center;
     background-color: rgba(0, 0, 0, 0.8);
+    z-index: 10;
 }
 
 #startButton, #restartButton {
@@ -40,6 +58,7 @@ body {
     border: none;
     border-radius: 5px;
     transition: background-color 0.3s;
+    margin-top: 10px;
 }
 
 #startButton:hover, #restartButton:hover {
@@ -55,4 +74,15 @@ body {
 #gameInfo span {
     font-size: 18px;
     font-weight: bold;
+}
+
+#scoreboard {
+    list-style: none;
+    padding: 0;
+    margin-top: 10px;
+}
+
+#scoreboard li {
+    font-size: 16px;
+    margin: 5px 0;
 }
